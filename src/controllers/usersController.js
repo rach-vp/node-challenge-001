@@ -1,11 +1,18 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/users');
+
+const passwordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
 module.exports = {
   async createUser(req, res) {
     const { email, password } = req.body;
 
     try {
-      const user = await User.query().insert({ email, password });
+      const userPasswordHash = await passwordHash(password);
+      const user = await User.query().insert({
+        email,
+        password: userPasswordHash,
+      });
 
       res.status(201).json({
         message: 'User successfully created',
