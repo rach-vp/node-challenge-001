@@ -16,4 +16,10 @@ router
     usersController.login,
   );
 
+router
+  .get(
+    '/users',
+    usersController.listUsers,
+  );
+
 module.exports = router;

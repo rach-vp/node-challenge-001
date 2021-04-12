@@ -26,4 +26,14 @@ module.exports = {
   async login(req, res) {
     res.status(204).json();
   },
+
+  async listUsers(req, res) {
+    try {
+      const users = await User.query();
+
+      res.status(201).json(users);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };
