@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --watch src --exec babel-node src/app.js",
+    "migration-create": "npx knex migrate:make --knexfile ./knexfile.js",
     "migrate": "npx knex migrate:latest --knexfile ./knexfile.js",
     "drop": "npx knex migrate:down --knexfile ./knexfile.js",
     "make-seed": "npx knex seed:make --knexfile ./knexfile.js",

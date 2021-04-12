@@ -1,8 +1,9 @@
 const router = require('express').Router();
+const authorsController = require('../controllers/authorsController');
 
 router.get(
   '/admin/authors',
-  (req, res) => res.status(200).json({ message: 'Get full list of authors' }),
+  authorsController.listAuthors,
 );
 
 router.get(
