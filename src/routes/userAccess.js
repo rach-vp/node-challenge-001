@@ -1,7 +1,16 @@
 const router = require('express').Router();
+const usersController = require('../controllers/usersController');
 
-router.get('/login', (req, res) => res.status(200).send({ message: 'this is the login route' }));
+router
+  .post(
+    '/sign-up',
+    usersController.createUser,
+  );
 
-router.get('/sign-up', (req, res) => res.status(200).send({ message: 'this is the sign-up route' }));
+router
+  .post(
+    '/login',
+    (req, res) => res.status(200).send({ message: 'this is the login route' }),
+  );
 
 module.exports = router;
