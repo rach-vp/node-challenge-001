@@ -8,7 +8,7 @@ router.get(
 
 router.get(
   '/admin/authors/:id',
-  (req, res) => res.status(200).json({ message: 'Get author by id' }),
+  authorsController.getAuthorById,
 );
 
 router.post(
