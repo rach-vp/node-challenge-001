@@ -26,4 +26,23 @@ module.exports = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  create: async (req, res) => {
+    const { name, email, picture } = req.body;
+
+    try {
+      const author = await Author.query().insert({
+        name,
+        email,
+        picture,
+      });
+
+      res.status(200).json({
+        message: 'Author successfully created',
+        author: { id: author.id, name, picture },
+      });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

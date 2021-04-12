@@ -13,7 +13,7 @@ router.get(
 
 router.post(
   '/admin/authors',
-  (req, res) => res.status(200).json({ message: 'Create a new author' }),
+  authorsController.create,
 );
 
 router.put(
