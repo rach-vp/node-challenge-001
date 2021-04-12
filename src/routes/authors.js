@@ -18,7 +18,7 @@ router.post(
 
 router.put(
   '/admin/authors/:id',
-  (req, res) => res.status(200).json({ message: 'Update author info' }),
+  authorsController.update,
 );
 
 router.delete(
