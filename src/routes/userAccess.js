@@ -1,3 +1,5 @@
+const passport = require('passport');
+
 const router = require('express').Router();
 const usersController = require('../controllers/usersController');
 
@@ -10,7 +12,8 @@ router
 router
   .post(
     '/login',
-    (req, res) => res.status(200).send({ message: 'this is the login route' }),
+    passport.authenticate('local', { session: false }),
+    usersController.login,
   );
 
 module.exports = router;

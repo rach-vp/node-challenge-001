@@ -23,16 +23,7 @@ module.exports = {
     }
   },
 
-  // async login(req, res) {
-  //   const { email, password } = req.body;
-
-  //   try {
-  //     const user = await User.query().where({ email }).first();
-  //     if (!user) {
-  //       throw new Error('Permission denied');
-  //     }
-  //   } catch (error) {
-  //     res.status(400).json({ error: error.message });
-  //   }
-  // },
+  async login(req, res) {
+    res.status(204).json();
+  },
 };

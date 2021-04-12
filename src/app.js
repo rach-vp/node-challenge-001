@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./auth');
 
 const express = require('express');
 const helmet = require('helmet');
