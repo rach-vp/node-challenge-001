@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const { NotFoundError } = require('objection');
+const { NotFoundError } = require('../errors');
 const Author = require('../models/authors');
 
 module.exports = {
@@ -62,6 +62,23 @@ module.exports = {
       }
 
       res.status(201).json(updatedAuthor);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  delete: async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const author = await Author.query().deleteById(id);
+      if (!author) {
+        throw new NotFoundError('Author');
+      }
+
+      res.status(200).json({
+        message: 'Author successfully deleted',
+      });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

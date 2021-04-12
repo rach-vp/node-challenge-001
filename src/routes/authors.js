@@ -23,7 +23,7 @@ router.put(
 
 router.delete(
   '/admin/authors/:id',
-  (req, res) => res.status(200).json({ message: 'Delete an author' }),
+  authorsController.delete,
 );
 
 module.exports = router;
