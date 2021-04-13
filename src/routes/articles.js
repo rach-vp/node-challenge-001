@@ -11,6 +11,11 @@ router.get(
   articlesController.getArticleById,
 );
 
+router.get(
+  '/articles/',
+  articlesController.getArticleByCategory,
+);
+
 router.post(
   '/admin/articles',
   articlesController.create,

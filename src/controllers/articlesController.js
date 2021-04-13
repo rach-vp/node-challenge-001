@@ -29,6 +29,22 @@ module.exports = {
     }
   },
 
+  getArticleByCategory: async (req, res) => {
+    const { category: categoryRaw } = req.query;
+    const category = categoryRaw.split('+').join(' ');
+    try {
+      const article = await Article.query().where('category', category);
+
+      if (!article) {
+        throw new NotFoundError('Article');
+      }
+
+      res.status(200).json(article);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
   create: async (req, res) => {
     const {
       title,
