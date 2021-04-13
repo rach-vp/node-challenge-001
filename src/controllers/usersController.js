@@ -4,7 +4,7 @@ const User = require('../models/users');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
-const createJWT = (user) => jwt.sign({ id: user.id }, process.env.JWT_KEY);
+const createJWT = (user) => jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15m' });
 
 module.exports = {
   async createUser(req, res) {
