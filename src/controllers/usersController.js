@@ -1,20 +1,9 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const moment = require('moment');
 const User = require('../models/users');
-const { blocklist, allowlistRefreshToken } = require('../redis');
+const { blocklist } = require('../redis');
+const tokens = require('../tokens');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
-
-const createJWT = (user) => jwt.sign({ id: user.id }, process.env.JWT_KEY, { expiresIn: '15m' });
-
-const createOpaqueToken = async (user) => {
-  const opaqueToken = crypto.randomBytes(24).toString('hex');
-  const expirationDate = moment().add(5, 'd').unix();
-  await allowlistRefreshToken.add(opaqueToken, user.id, expirationDate);
-  return opaqueToken;
-};
 
 module.exports = {
   async createUser(req, res) {
@@ -37,9 +26,9 @@ module.exports = {
   },
 
   async login(req, res) {
-    const { user } = req;
-    const accessToken = createJWT(user);
-    const refreshToken = await createOpaqueToken(user);
+    const { id } = req.user;
+    const accessToken = tokens.access.create(id);
+    const refreshToken = await tokens.refresh.create(id);
     res.set('Authorization', accessToken);
     res.status(200).json({ refreshToken });
   },
