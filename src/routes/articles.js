@@ -16,4 +16,14 @@ router.post(
   articlesController.create,
 );
 
+router.put(
+  '/admin/articles/:id',
+  articlesController.update,
+);
+
+router.delete(
+  '/admin/articles/:id',
+  articlesController.delete,
+);
+
 module.exports = router;
