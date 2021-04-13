@@ -1,14 +1,17 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
-const passwordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
+const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
+
+const createJWT = (user) => jwt.sign({ id: user.id }, process.env.JWT_KEY);
 
 module.exports = {
   async createUser(req, res) {
     try {
       const { email, password } = req.body;
 
-      const userPasswordHash = await passwordHash(password);
+      const userPasswordHash = await createPasswordHash(password);
       const user = await User.query().insert({
         email,
         password: userPasswordHash,
@@ -24,6 +27,8 @@ module.exports = {
   },
 
   async login(req, res) {
+    const token = createJWT(req.user);
+    res.set('Authorization', token);
     res.status(204).json();
   },
 

@@ -1,7 +1,7 @@
 exports.seed = async (knex) => knex('articles').del()
   .then(() => knex('articles').insert([
     {
-      author_id: 1,
+      author_id: 22,
       category: 'web development',
       title: 'React vs Vue battle',
       summary: 'Of course Vue is better!',
@@ -11,7 +11,7 @@ exports.seed = async (knex) => knex('articles').del()
         Atirei o pau no gatis, per gatis num morreus. Delegadis gente finis, bibendum egestas augue arcu ut est. Admodum accumsan disputationi eu sit. Vide electram sadipscing et per. Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis.`,
     },
     {
-      author_id: 3,
+      author_id: 23,
       category: 'technical analysis',
       title: 'Elliot waves counting at ESFUT',
       summary: 'How waves counting can improve your studies',
