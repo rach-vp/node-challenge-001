@@ -1,3 +1,3 @@
 const redis = require('redis');
 
-module.exports = redis.createClient({ prefix: 'blocklst:' });
+module.exports = redis.createClient({ prefix: 'blocklist:' });

@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('./auth');
 require('./redis/blocklist');
+require('./redis/allowlistRefreshToken');
 
 const express = require('express');
 const helmet = require('helmet');

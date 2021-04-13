@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const User = require('../models/users');
 const { InvalidArgumentError } = require('../errors');
-const blocklist = require('../redis/blocklistHandling');
+const { blocklist } = require('../redis');
 
 const validateUser = (user) => { if (!user) throw new InvalidArgumentError('User not found'); };
 const validatePassword = async (password, hash) => {
