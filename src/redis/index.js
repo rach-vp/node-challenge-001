@@ -1,8 +1,14 @@
 const handleList = require('./handleList');
-const blocklist = require('./blocklist');
+const blocklistAccessToken = require('./blocklistAccessToken');
 const allowlistRefreshToken = require('./allowlistRefreshToken');
 
 module.exports = {
-  blocklist: handleList(blocklist),
-  allowlistRefreshToken: handleList(allowlistRefreshToken),
+  blocklistAccessToken: {
+    list: blocklistAccessToken,
+    handle: handleList(blocklistAccessToken),
+  },
+  allowlistRefreshToken: {
+    list: allowlistRefreshToken,
+    handle: handleList(allowlistRefreshToken),
+  },
 };

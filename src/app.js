@@ -1,6 +1,6 @@
 require('dotenv').config();
 require('./auth');
-require('./redis/blocklist');
+require('./redis/blocklistAccessToken');
 require('./redis/allowlistRefreshToken');
 
 const express = require('express');

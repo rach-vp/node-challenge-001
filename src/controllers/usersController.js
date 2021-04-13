@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/users');
-const { blocklist } = require('../redis');
+const { blocklistAccessToken } = require('../redis');
 const tokens = require('../tokens');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
@@ -36,7 +36,7 @@ module.exports = {
   async logout(req, res) {
     try {
       const { token } = req;
-      await blocklist.add(token);
+      await blocklistAccessToken.handle.add(token);
       res.status(204).json({ message: 'user succesfully logged out' });
     } catch (error) {
       res.status(500).json({ error: error.message });
