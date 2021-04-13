@@ -27,7 +27,7 @@ module.exports = {
     passport.authenticate(
       'bearer',
       { session: false },
-      (error, user) => {
+      (error, user, info) => {
         if (error) {
           if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ error: error.message });
@@ -44,6 +44,7 @@ module.exports = {
           return res.status(401).json();
         }
 
+        req.token = info.token;
         req.user = user;
         return next();
       },

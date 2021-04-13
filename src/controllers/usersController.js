@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
+const blocklist = require('../redis/blocklistHandling');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
@@ -30,6 +31,16 @@ module.exports = {
     const token = createJWT(req.user);
     res.set('Authorization', token);
     res.status(204).json();
+  },
+
+  async logout(req, res) {
+    try {
+      const { token } = req;
+      await blocklist.add(token);
+      res.status(204).json({ message: 'user succesfully logged out' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   },
 
   async listUsers(req, res) {

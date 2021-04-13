@@ -17,6 +17,13 @@ router
 
 router
   .get(
+    '/logout',
+    authentication.bearer,
+    usersController.logout,
+  );
+
+router
+  .get(
     '/users',
     authentication.bearer,
     usersController.listUsers,

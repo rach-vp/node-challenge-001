@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./auth');
+require('./redis/blocklist');
 
 const express = require('express');
 const helmet = require('helmet');
