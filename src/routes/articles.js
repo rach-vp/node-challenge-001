@@ -11,4 +11,9 @@ router.get(
   articlesController.getArticleById,
 );
 
+router.post(
+  '/admin/articles',
+  articlesController.create,
+);
+
 module.exports = router;
