@@ -5,9 +5,9 @@ const passwordHash = async (password) => bcrypt.hash(password, Number(process.en
 
 module.exports = {
   async createUser(req, res) {
-    const { email, password } = req.body;
-
     try {
+      const { email, password } = req.body;
+
       const userPasswordHash = await passwordHash(password);
       const user = await User.query().insert({
         email,

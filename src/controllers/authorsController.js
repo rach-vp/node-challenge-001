@@ -15,9 +15,9 @@ module.exports = {
   },
 
   getAuthorById: async (req, res) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
+
       const author = await Author.query().findById(id);
       if (!author) {
         throw new NotFoundError('Author');
@@ -30,9 +30,9 @@ module.exports = {
   },
 
   create: async (req, res) => {
-    const { name, email, picture } = req.body;
-
     try {
+      const { name, email, picture } = req.body;
+
       const author = await Author.query().insert({
         name,
         email,
@@ -49,10 +49,10 @@ module.exports = {
   },
 
   update: async (req, res) => {
-    const { id } = req.params;
-    const data = req.body;
-
     try {
+      const { id } = req.params;
+      const data = req.body;
+
       const updatedAuthor = await Author.query().patchAndFetchById(
         id,
         { ...data, updated_at: moment() },
@@ -68,9 +68,9 @@ module.exports = {
   },
 
   delete: async (req, res) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
+
       const author = await Author.query().deleteById(id);
       if (!author) {
         throw new NotFoundError('Author');

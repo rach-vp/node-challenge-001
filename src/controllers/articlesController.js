@@ -14,9 +14,9 @@ module.exports = {
   },
 
   getArticleById: async (req, res) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
+
       const article = await Article.query().findById(id);
 
       if (!article) {
@@ -30,9 +30,10 @@ module.exports = {
   },
 
   getArticleByCategory: async (req, res) => {
-    const { category: categoryRaw } = req.query;
-    const category = categoryRaw.split('+').join(' ');
     try {
+      const { category: categoryRaw } = req.query;
+      const category = categoryRaw.split('+').join(' ');
+
       const article = await Article.query().where('category', category);
 
       if (!article) {
@@ -46,16 +47,16 @@ module.exports = {
   },
 
   create: async (req, res) => {
-    const {
-      title,
-      category,
-      summary,
-      first_paragraph: firstParagraph,
-      body,
-      Article_id: ArticleId,
-    } = req.body;
-
     try {
+      const {
+        title,
+        category,
+        summary,
+        first_paragraph: firstParagraph,
+        body,
+        Article_id: ArticleId,
+      } = req.body;
+
       const article = await Article.query().insert({
         title,
         category,
@@ -77,10 +78,10 @@ module.exports = {
   },
 
   update: async (req, res) => {
-    const { id } = req.params;
-    const data = req.body;
-
     try {
+      const { id } = req.params;
+      const data = req.body;
+
       const updatedArticle = await Article.query().patchAndFetchById(
         id,
         { ...data, updated_at: moment() },
@@ -99,9 +100,9 @@ module.exports = {
   },
 
   delete: async (req, res) => {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
+
       const article = await Article.query().deleteById(id);
       if (!article) {
         throw new NotFoundError('Article');
