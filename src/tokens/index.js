@@ -15,11 +15,13 @@ const createJWT = (id, [timeAmount, timeUnit]) => (
   jwt.sign({ id }, process.env.JWT_KEY, { expiresIn: timeAmount + timeUnit })
 );
 
-const verifyJWTToken = async (token, name, blocklist) => {
+const verifyJWT = async (token, name, blocklist) => {
   await verifyTokenOnBlocklist(token, name, blocklist);
   const { id } = jwt.verify(token, process.env.JWT_KEY);
   return id;
 };
+
+const invalidateJWT = (token, blocklist) => blocklist.handle.add(token);
 
 const createOpaqueToken = async (id, [timeAmount, timeUnit], allowlist) => {
   const opaqueToken = crypto.randomBytes(24).toString('hex');
@@ -39,6 +41,8 @@ const verifyOpaqueToken = async (refreshToken, name, allowlist) => {
   return id;
 };
 
+const invalidateOpaqueToken = async (token, allowlist) => allowlist.handle.delete(token);
+
 module.exports = {
   access: {
     name: 'access token',
@@ -48,7 +52,10 @@ module.exports = {
       return createJWT(id, this.expiration);
     },
     verify(token) {
-      return verifyJWTToken(token, this.name, this.list);
+      return verifyJWT(token, this.name, this.list);
+    },
+    invalidate(token) {
+      return invalidateJWT(token, this.list);
     },
   },
   refresh: {
@@ -60,6 +67,9 @@ module.exports = {
     },
     verify(token) {
       return verifyOpaqueToken(token, this.name, this.list);
+    },
+    invalidate(token) {
+      return invalidateOpaqueToken(token, this.list);
     },
   },
 };
