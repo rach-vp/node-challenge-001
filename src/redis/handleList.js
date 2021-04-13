@@ -1,4 +1,5 @@
 const { promisify } = require('util');
+const jwt = require('jsonwebtoken');
 
 module.exports = (list) => {
   const setAsync = promisify(list.set).bind(list);
@@ -7,9 +8,13 @@ module.exports = (list) => {
   const delAsync = promisify(list.del).bind(list);
 
   return {
-    async add(key, value, expirationDate) {
+    async add(key, value = '', expirationDate) {
       await setAsync(key, value);
-      list.expireat(key, expirationDate);
+      if (!expirationDate) {
+        list.expireat(key, jwt.decode(key).exp);
+      } else {
+        list.expireat(key, expirationDate);
+      }
     },
 
     async contains(key) {

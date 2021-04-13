@@ -16,9 +16,9 @@ router
   );
 
 router
-  .get(
+  .post(
     '/logout',
-    authentication.bearer,
+    [authentication.refresh, authentication.bearer],
     usersController.logout,
   );
 
@@ -27,6 +27,13 @@ router
     '/users',
     authentication.bearer,
     usersController.listUsers,
+  );
+
+router
+  .post(
+    '/users/refresh-token',
+    authentication.refresh,
+    usersController.login,
   );
 
 module.exports = router;
