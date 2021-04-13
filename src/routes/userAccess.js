@@ -1,6 +1,6 @@
-const passport = require('passport');
 const router = require('express').Router();
 const usersController = require('../controllers/usersController');
+const { authentication } = require('../middlewares');
 
 router
   .post(
@@ -11,13 +11,14 @@ router
 router
   .post(
     '/login',
-    passport.authenticate('local', { session: false }),
+    authentication.local,
     usersController.login,
   );
 
 router
   .get(
     '/users',
+    authentication.bearer,
     usersController.listUsers,
   );
 

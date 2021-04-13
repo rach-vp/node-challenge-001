@@ -1,35 +1,34 @@
-const passport = require('passport');
-
 const router = require('express').Router();
 const authorsController = require('../controllers/authorsController');
+const { authentication } = require('../middlewares');
 
 router.get(
   '/admin/authors',
-  passport.authenticate('bearer', { session: false }),
+  authentication.bearer,
   authorsController.listAuthors,
 );
 
 router.get(
   '/admin/authors/:id',
-  passport.authenticate('bearer', { session: false }),
+  authentication.bearer,
   authorsController.getAuthorById,
 );
 
 router.post(
   '/admin/authors',
-  passport.authenticate('bearer', { session: false }),
+  authentication.bearer,
   authorsController.create,
 );
 
 router.put(
   '/admin/authors/:id',
-  passport.authenticate('bearer', { session: false }),
+  authentication.bearer,
   authorsController.update,
 );
 
 router.delete(
   '/admin/authors/:id',
-  passport.authenticate('bearer', { session: false }),
+  authentication.bearer,
   authorsController.delete,
 );
 
