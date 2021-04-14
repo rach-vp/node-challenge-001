@@ -1,6 +1,7 @@
 const passport = require('passport');
 const User = require('../models/users');
 const tokens = require('../tokens');
+const { InvalidArgumentError } = require('../errors');
 
 module.exports = {
   local: (req, res, next) => {
@@ -9,6 +10,10 @@ module.exports = {
       { session: false },
       (error, user) => {
         if (error) return next(error);
+
+        if (!user) {
+          throw new InvalidArgumentError('user not informed');
+        }
 
         req.user = user;
         req.authenticated = true;

@@ -22,10 +22,7 @@ module.exports = {
       const verificationEmail = new VerificationEmail(user.email, address);
       verificationEmail.sendEmail(user.email).catch(console.log);
 
-      res.status(201).json({
-        message: 'User successfully created',
-        user: { id: user.id, email },
-      });
+      res.status(201).send();
     } catch (error) {
       next(error);
     }
@@ -47,7 +44,7 @@ module.exports = {
     try {
       const { token } = req;
       await tokens.access.invalidate(token);
-      res.status(204).json({ message: 'user succesfully logged out' });
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
@@ -74,7 +71,7 @@ module.exports = {
         },
       );
 
-      res.status(201).json({ message: 'user successfully verified' });
+      res.status(201).send();
     } catch (error) {
       next(error);
     }

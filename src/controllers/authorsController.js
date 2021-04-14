@@ -2,13 +2,15 @@ const moment = require('moment');
 
 const { NotFoundError } = require('../errors');
 const Author = require('../models/authors');
+const { AuthorSerializer } = require('../serializers');
 
 module.exports = {
   listAuthors: async (req, res, next) => {
     try {
       const authors = await Author.query();
+      const authorSerializer = new AuthorSerializer('json', ['id', 'created_at', 'updated_at']);
 
-      res.status(201).json(authors);
+      res.status(201).send(authorSerializer.serialize(authors));
     } catch (error) {
       next(error);
     }
@@ -23,7 +25,9 @@ module.exports = {
         throw new NotFoundError('Author');
       }
 
-      res.status(201).json(author);
+      const authorSerializer = new AuthorSerializer('json', ['id', 'email', 'created_at', 'updated_at']);
+
+      res.status(201).send(authorSerializer.serialize(author));
     } catch (error) {
       next(error);
     }
@@ -31,18 +35,11 @@ module.exports = {
 
   create: async (req, res, next) => {
     try {
-      const { name, email, picture } = req.body;
+      const data = req.body;
 
-      const author = await Author.query().insert({
-        name,
-        email,
-        picture,
-      });
+      await Author.query().insert(data);
 
-      res.status(200).json({
-        message: 'Author successfully created',
-        author: { id: author.id, name, picture },
-      });
+      res.status(200).send();
     } catch (error) {
       next(error);
     }
@@ -61,7 +58,7 @@ module.exports = {
         throw new NotFoundError('Author');
       }
 
-      res.status(201).json(updatedAuthor);
+      res.status(201).send();
     } catch (error) {
       next(error);
     }
@@ -71,14 +68,13 @@ module.exports = {
     try {
       const { id } = req.params;
 
-      const author = await Author.query().deleteById(id);
+      const author = await Author.query().findById(id);
       if (!author) {
         throw new NotFoundError('Author');
       }
+      await Author.query().deleteById(id);
 
-      res.status(200).json({
-        message: 'Author successfully deleted',
-      });
+      res.status(200).send();
     } catch (error) {
       next(error);
     }

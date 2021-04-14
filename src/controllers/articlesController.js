@@ -10,7 +10,7 @@ module.exports = {
       const articles = await Article.query();
       const serializer = new ArticleSerializer(
         'json',
-        ['id', 'first_paragraph', 'body', 'author_id', 'created_at', 'updated_at'],
+        ['id', 'author_id', 'created_at', 'updated_at'],
       );
 
       res.status(200).send(serializer.serialize(articles));

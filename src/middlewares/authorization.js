@@ -21,6 +21,7 @@ const methods = {
 
 module.exports = (entity, action) => (req, res, next) => {
   const { role } = req.user;
+  console.log(role);
   const rolePermissions = control.can(role);
   const actions = methods[action];
 
