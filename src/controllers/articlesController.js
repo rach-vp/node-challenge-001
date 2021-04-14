@@ -62,15 +62,29 @@ module.exports = {
   getArticleByCategory: async (req, res) => {
     try {
       const { category: categoryRaw } = req.query;
-      const category = categoryRaw.split('+').join(' ');
+      const categoryFormated = categoryRaw.split('+').join(' ');
 
-      const article = await Article.query().where('category', category);
+      const articles = await Article.query().where('category', categoryFormated);
 
-      if (!article) {
+      if (!articles) {
         throw new NotFoundError('Article');
       }
 
-      res.status(200).json(article);
+      const formatedArrayArticles = await Promise.all(
+        articles.map(async ({
+          category, title, summary, author_id: authorId,
+        }) => {
+          const { name, picture } = await Author.query().findById(authorId);
+          return {
+            author: { name, picture },
+            category,
+            title,
+            summary,
+          };
+        }),
+      );
+
+      res.status(200).json(formatedArrayArticles);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

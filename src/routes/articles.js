@@ -27,7 +27,6 @@ router.get(
 
 router.get(
   '/articles/',
-  [authentication.bearer, authorization('article', 'read')],
   articlesController.getArticleByCategory,
 );
 
