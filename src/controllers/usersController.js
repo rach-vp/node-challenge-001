@@ -7,7 +7,7 @@ const { VerificationEmail } = require('../emails');
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
 module.exports = {
-  async createUser(req, res) {
+  async createUser(req, res, next) {
     try {
       const { email, password } = req.body;
 
@@ -27,39 +27,43 @@ module.exports = {
         user: { id: user.id, email },
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  async login(req, res) {
-    const { id } = req.user;
-    const accessToken = tokens.access.create(id);
-    const refreshToken = await tokens.refresh.create(id);
-    res.set('Authorization', accessToken);
-    res.status(200).json({ refreshToken });
+  async login(req, res, next) {
+    try {
+      const { id } = req.user;
+      const accessToken = tokens.access.create(id);
+      const refreshToken = await tokens.refresh.create(id);
+      res.set('Authorization', accessToken);
+      res.status(200).json({ refreshToken });
+    } catch (error) {
+      next(error);
+    }
   },
 
-  async logout(req, res) {
+  async logout(req, res, next) {
     try {
       const { token } = req;
       await tokens.access.invalidate(token);
       res.status(204).json({ message: 'user succesfully logged out' });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      next(error);
     }
   },
 
-  async listUsers(req, res) {
+  async listUsers(req, res, next) {
     try {
       const users = await User.query();
 
       res.status(201).json(users);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  async verifyEmail(req, res) {
+  async verifyEmail(req, res, next) {
     try {
       const { id } = req.user;
       await User.query().patchAndFetchById(
@@ -72,7 +76,7 @@ module.exports = {
 
       res.status(201).json({ message: 'user successfully verified' });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 };

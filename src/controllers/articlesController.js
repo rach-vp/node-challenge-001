@@ -20,11 +20,12 @@ module.exports = {
       let formatedArticleObj;
 
       const article = await Article.query().findById(id);
-      const { name, picture } = await Author.query().findById(article.author_id);
 
       if (!article) {
         throw new NotFoundError('Article');
       }
+
+      const { name, picture } = await Author.query().findById(article.author_id);
 
       if (!req.authenticated) {
         const {

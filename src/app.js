@@ -5,6 +5,7 @@ require('./redis/allowlistRefreshToken');
 
 const express = require('express');
 const helmet = require('helmet');
+const { InvalidArgumentError } = require('./errors');
 
 const routes = require('./routes');
 
@@ -15,6 +16,16 @@ app.use(helmet());
 app.use(express.json());
 
 app.use('/api', routes);
+
+app.use((error, req, res) => {
+  const body = { message: error.message };
+  switch (error.constructor) {
+    case InvalidArgumentError:
+      return res.status(401).json(body);
+    default:
+      return res.status(500).json(body);
+  }
+});
 
 app.listen(
   port,
