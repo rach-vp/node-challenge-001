@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const usersController = require('../controllers/usersController');
-const { authentication } = require('../middlewares');
+const { authentication, authorization } = require('../middlewares');
 
 router
   .post(
@@ -25,7 +25,7 @@ router
 router
   .get(
     '/users',
-    authentication.bearer,
+    [authentication.bearer, authorization('article', 'read')],
     usersController.listUsers,
   );
 

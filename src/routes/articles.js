@@ -1,40 +1,40 @@
 const router = require('express').Router();
 const articlesController = require('../controllers/articlesController');
-const { authentication } = require('../middlewares');
+const { authentication, authorization } = require('../middlewares');
 
 router.get(
   '/admin/articles',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'read')],
   articlesController.listArticles,
 );
 
 router.get(
   '/admin/articles/:id',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'read')],
   articlesController.getArticleById,
 );
 
 router.get(
   '/articles/',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'read')],
   articlesController.getArticleByCategory,
 );
 
 router.post(
   '/admin/articles',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'create')],
   articlesController.create,
 );
 
 router.put(
   '/admin/articles/:id',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'update')],
   articlesController.update,
 );
 
 router.delete(
   '/admin/articles/:id',
-  authentication.bearer,
+  [authentication.bearer, authorization('article', 'delete')],
   articlesController.delete,
 );
 
