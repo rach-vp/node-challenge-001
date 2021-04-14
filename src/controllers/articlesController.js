@@ -90,29 +90,13 @@ module.exports = {
 
   create: async (req, res) => {
     try {
-      const {
-        title,
-        category,
-        summary,
-        first_paragraph: firstParagraph,
-        body,
-        Article_id: ArticleId,
-      } = req.body;
+      const data = req.body;
 
-      const article = await Article.query().insert({
-        title,
-        category,
-        summary,
-        first_paragraph: firstParagraph,
-        body,
-        Article_id: ArticleId,
-      });
+      const { id, title } = await Article.query().insert(data);
 
       res.status(200).json({
         message: 'Article successfully created',
-        article: {
-          id: article.id, title, ArticleId,
-        },
+        article: { id, title },
       });
     } catch (error) {
       res.status(400).json({ error: error.message });

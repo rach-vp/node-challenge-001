@@ -44,7 +44,11 @@ router.put(
 
 router.delete(
   '/admin/articles/:id',
-  [authentication.bearer, authorization('article', 'delete')],
+  [
+    authentication.bearer,
+    authentication.local,
+    authorization('article', 'delete'),
+  ],
   articlesController.delete,
 );
 

@@ -28,7 +28,11 @@ router.put(
 
 router.delete(
   '/admin/authors/:id',
-  [authentication.bearer, authorization('author', 'delete')],
+  [
+    authentication.bearer,
+    authentication.local,
+    authorization('author', 'delete'),
+  ],
   authorsController.delete,
 );
 
