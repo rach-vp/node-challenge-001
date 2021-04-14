@@ -5,6 +5,8 @@ const { blocklistAccessToken, allowlistRefreshToken } = require('../redis');
 const { InvalidArgumentError } = require('../errors');
 
 const verifyTokenOnBlocklist = async (token, name, blocklist) => {
+  if (!blocklist) return;
+
   const isOnBlocklist = await blocklist.handle.contains(token);
   if (isOnBlocklist) {
     throw new jwt.JsonWebTokenError(`${name} invalidated by logout`);
@@ -70,6 +72,16 @@ module.exports = {
     },
     invalidate(token) {
       return invalidateOpaqueToken(token, this.list);
+    },
+  },
+  emailVerification: {
+    name: 'email verification token',
+    expiration: [1, 'h'],
+    create(id) {
+      return createJWT(id, this.expiration);
+    },
+    verify(token) {
+      return verifyJWT(token, this.name, this.expiration);
     },
   },
 };

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/users');
 const tokens = require('../tokens');
+const { VerificationEmail } = require('../emails');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
@@ -14,6 +15,11 @@ module.exports = {
         email,
         password: userPasswordHash,
       });
+
+      const verificationToken = tokens.emailVerification.create(user.id);
+      const address = `${process.env.API_ADDRESS}/user/verify-email/${verificationToken}`;
+      const verificationEmail = new VerificationEmail(user.email, address);
+      verificationEmail.sendEmail(user.email).catch(console.log);
 
       res.status(201).json({
         message: 'User successfully created',
