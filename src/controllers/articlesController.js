@@ -2,13 +2,18 @@ const moment = require('moment');
 const Article = require('../models/articles');
 const Author = require('../models/authors');
 const { NotFoundError } = require('../errors');
+const { ArticleSerializer, AuthorSerializer } = require('../serializers');
 
 module.exports = {
   listArticles: async (req, res, next) => {
     try {
       const articles = await Article.query();
+      const serializer = new ArticleSerializer(
+        'json',
+        ['id', 'first_paragraph', 'body', 'author_id', 'created_at', 'updated_at'],
+      );
 
-      res.status(200).json(articles);
+      res.status(200).send(serializer.serialize(articles));
     } catch (error) {
       next(error);
     }
@@ -17,7 +22,6 @@ module.exports = {
   getArticleById: async (req, res, next) => {
     try {
       const { id } = req.params;
-      let formatedArticleObj;
 
       const article = await Article.query().findById(id);
 
@@ -25,34 +29,23 @@ module.exports = {
         throw new NotFoundError('Article');
       }
 
-      const { name, picture } = await Author.query().findById(article.author_id);
+      const authorSerializer = new AuthorSerializer('json');
+      const author = await Author.query().findById(article.author_id);
+      article.author = JSON.parse(authorSerializer.serialize(author));
 
       if (!req.authenticated) {
-        const {
-          category, title, summary, first_paragraph: firstParagraph,
-        } = article;
-        formatedArticleObj = {
-          author: { name, picture },
-          category,
-          title,
-          summary,
-          firstParagraph,
-        };
+        const articleSerializer = new ArticleSerializer('json', ['first_paragraph']);
+        res.status(200).send(articleSerializer.serialize(article));
       } else if (req.user.role !== 'admin') {
-        const {
-          category, title, summary, first_paragraph: firstParagraph, body,
-        } = article;
-        formatedArticleObj = {
-          author: { name, picture },
-          category,
-          title,
-          summary,
-          firstParagraph,
-          body,
-        };
+        const articleSerializer = new ArticleSerializer('json', ['first_paragraph', 'body']);
+        res.status(200).send(articleSerializer.serialize(article));
+      } else {
+        const articleSerializer = new ArticleSerializer(
+          'json',
+          ['id', 'first_paragraph', 'body', 'author_id', 'created_at', 'updated_at'],
+        );
+        res.status(200).send(articleSerializer.serialize(article));
       }
-
-      res.status(200).json(formatedArticleObj || article);
     } catch (error) {
       next(error);
     }
@@ -69,21 +62,15 @@ module.exports = {
         throw new NotFoundError('Article');
       }
 
-      const formatedArrayArticles = await Promise.all(
-        articles.map(async ({
-          category, title, summary, author_id: authorId,
-        }) => {
-          const { name, picture } = await Author.query().findById(authorId);
-          return {
-            author: { name, picture },
-            category,
-            title,
-            summary,
-          };
-        }),
-      );
+      const articleSerializer = new ArticleSerializer('json');
+      const authorSerializer = new AuthorSerializer('json');
 
-      res.status(200).json(formatedArrayArticles);
+      const tempArticles = await Promise.all(articles.map(async (article) => {
+        const author = await Author.query().findById(article.author_id);
+        return { ...article, author: JSON.parse(authorSerializer.serialize(author)) };
+      }));
+
+      res.status(200).send(articleSerializer.serialize(tempArticles));
     } catch (error) {
       next(error);
     }
@@ -93,12 +80,9 @@ module.exports = {
     try {
       const data = req.body;
 
-      const { id, title } = await Article.query().insert(data);
+      await Article.query().insert(data);
 
-      res.status(200).json({
-        message: 'Article successfully created',
-        article: { id, title },
-      });
+      res.status(200).send();
     } catch (error) {
       next(error);
     }
@@ -117,7 +101,7 @@ module.exports = {
         throw new NotFoundError('Article');
       }
 
-      res.status(201).json(updatedArticle);
+      res.status(201).send();
     } catch (error) {
       next(error);
     }
@@ -132,9 +116,7 @@ module.exports = {
         throw new NotFoundError('Article');
       }
 
-      res.status(200).json({
-        message: 'Article successfully deleted',
-      });
+      res.status(200).send();
     } catch (error) {
       next(error);
     }

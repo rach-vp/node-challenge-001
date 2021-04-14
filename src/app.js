@@ -16,6 +16,11 @@ const port = process.env.PORT || '8080';
 
 app.use(helmet());
 app.use(express.json());
+app.use((req, res, next) => {
+  res.set({ 'Content-Type': 'application/json' });
+
+  next();
+});
 
 app.use('/api', routes);
 
