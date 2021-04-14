@@ -17,6 +17,7 @@ class User extends Model {
         id: { type: 'integer' },
         email: { type: 'string', pattern: '^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$' },
         password: { type: 'string', minLength: 6 },
+        email_verified: { type: 'boolean', default: false },
       },
     };
   }

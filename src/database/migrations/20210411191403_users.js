@@ -4,6 +4,7 @@ exports.up = (knex) => knex.schema.createTable(
     table.increments().primary();
     table.string('email').notNullable().unique();
     table.string('password').notNullable();
+    table.boolean('email_verified').defaultTo(false);
     table.timestamps(true, true);
   },
 );
