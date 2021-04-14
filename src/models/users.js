@@ -18,6 +18,7 @@ class User extends Model {
         email: { type: 'string', pattern: '^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$' },
         password: { type: 'string', minLength: 6 },
         email_verified: { type: 'boolean', default: false },
+        role: { type: 'string', enum: ['admin', 'subscriber'], default: 'subscriber' },
       },
     };
   }

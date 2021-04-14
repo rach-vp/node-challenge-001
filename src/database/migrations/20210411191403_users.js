@@ -5,6 +5,7 @@ exports.up = (knex) => knex.schema.createTable(
     table.string('email').notNullable().unique();
     table.string('password').notNullable();
     table.boolean('email_verified').defaultTo(false);
+    table.enu('role', ['admin', 'subscriber']).defaultTo(false);
     table.timestamps(true, true);
   },
 );
