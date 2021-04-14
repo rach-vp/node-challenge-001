@@ -36,4 +36,11 @@ router
     usersController.login,
   );
 
+router
+  .get(
+    '/users/verify-email/:token',
+    authentication.emailVerification,
+    usersController.verifyEmail,
+  );
+
 module.exports = router;

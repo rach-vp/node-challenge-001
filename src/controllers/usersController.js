@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 const User = require('../models/users');
 const tokens = require('../tokens');
 const { VerificationEmail } = require('../emails');
@@ -17,7 +18,7 @@ module.exports = {
       });
 
       const verificationToken = tokens.emailVerification.create(user.id);
-      const address = `${process.env.API_ADDRESS}/user/verify-email/${verificationToken}`;
+      const address = `${process.env.API_ADDRESS}/users/verify-email/${verificationToken}`;
       const verificationEmail = new VerificationEmail(user.email, address);
       verificationEmail.sendEmail(user.email).catch(console.log);
 
@@ -53,6 +54,23 @@ module.exports = {
       const users = await User.query();
 
       res.status(201).json(users);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async verifyEmail(req, res) {
+    try {
+      const { id } = req.user;
+      await User.query().patchAndFetchById(
+        id,
+        {
+          email_verified: true,
+          updated_at: moment(),
+        },
+      );
+
+      res.status(201).json({ message: 'user successfully verified' });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

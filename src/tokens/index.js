@@ -81,7 +81,7 @@ module.exports = {
       return createJWT(id, this.expiration);
     },
     verify(token) {
-      return verifyJWT(token, this.name, this.expiration);
+      return verifyJWT(token, this.name);
     },
   },
 };
