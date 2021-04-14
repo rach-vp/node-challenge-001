@@ -20,8 +20,7 @@ const methods = {
 };
 
 module.exports = (entity, action) => (req, res, next) => {
-  // const { role } = req.user;
-  const role = 'subscriber';
+  const { role } = req.user;
   const rolePermissions = control.can(role);
   const actions = methods[action];
 

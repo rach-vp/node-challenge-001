@@ -17,8 +17,6 @@ module.exports = {
   getArticleById: async (req, res) => {
     try {
       const { id } = req.params;
-      // const { role } = req.user;
-      const role = 'subscriber';
       let formatedArticleObj;
 
       const article = await Article.query().findById(id);
@@ -39,7 +37,7 @@ module.exports = {
           summary,
           firstParagraph,
         };
-      } else if (role !== 'admin') {
+      } else if (req.user.role !== 'admin') {
         const {
           category, title, summary, first_paragraph: firstParagraph, body,
         } = article;
@@ -53,7 +51,7 @@ module.exports = {
         };
       }
 
-      res.status(200).json(formatedArticleObj);
+      res.status(200).json(formatedArticleObj || article);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
