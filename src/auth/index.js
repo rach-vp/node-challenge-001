@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt');
 const LocalStrategy = require('passport-local').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const User = require('../models/users');
-const { InvalidArgumentError } = require('../errors');
+const { AccessDenied } = require('../errors');
 const tokens = require('../tokens');
 
-const validateUser = (user) => { if (!user) throw new InvalidArgumentError('User not found'); };
+const validateUser = (user) => { if (!user) throw new AccessDenied(); };
 const validatePassword = async (password, hash) => {
   const validPassword = await bcrypt.compare(password, hash);
-  if (!validPassword) throw new InvalidArgumentError('E-mail or password is incorrect');
+  if (!validPassword) throw new AccessDenied();
 };
 
 passport.use(

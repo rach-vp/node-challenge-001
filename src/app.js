@@ -5,7 +5,9 @@ require('./redis/allowlistRefreshToken');
 
 const express = require('express');
 const helmet = require('helmet');
-const { InvalidArgumentError } = require('./errors');
+const jwt = require('jsonwebtoken');
+const { ForeignKeyViolationError } = require('objection');
+const { InvalidArgumentError, AccessDenied, NotFoundError } = require('./errors');
 
 const routes = require('./routes');
 
@@ -17,11 +19,22 @@ app.use(express.json());
 
 app.use('/api', routes);
 
-app.use((error, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((error, _req, res, _next) => {
   const body = { message: error.message };
   switch (error.constructor) {
     case InvalidArgumentError:
+    case jwt.JsonWebTokenError:
+    case AccessDenied:
       return res.status(401).json(body);
+    case jwt.TokenExpiredError:
+      body.expiredAt = error.expiredAt;
+      return res.status(401).json(body);
+    case NotFoundError:
+      return res.status(404).json(body);
+    case ForeignKeyViolationError:
+      body.message = 'foreign key violation. check FK on the table';
+      return res.status(404).json(body);
     default:
       return res.status(500).json(body);
   }

@@ -28,7 +28,7 @@ module.exports = (entity, action) => (req, res, next) => {
   const ownPermission = rolePermissions[actions.own](entity);
   const isAllowed = anyPermission.granted || ownPermission.granted;
   if (!isAllowed) {
-    return res.status(403).end();
+    return res.status(403).json({ message: 'permission denied' });
   }
 
   req.acess = {

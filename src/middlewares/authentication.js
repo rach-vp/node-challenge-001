@@ -8,16 +8,7 @@ module.exports = {
       'local',
       { session: false },
       (error, user) => {
-        if (error) {
-          if (error.name === 'InvalidArgumentError') {
-            return res.status(401).json({ error: error.message });
-          }
-          return res.status(500).json({ error: error.message });
-        }
-
-        if (!user) {
-          return res.status(401).json();
-        }
+        if (error) return next(error);
 
         req.user = user;
         req.authenticated = true;
@@ -31,21 +22,8 @@ module.exports = {
       'bearer',
       { session: false },
       (error, user, info) => {
-        if (error) {
-          if (error.name === 'JsonWebTokenError') {
-            return res.status(401).json({ error: error.message });
-          } if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({
-              error: error.message,
-              expiredAt: error.expiredAt,
-            });
-          }
-          return res.status(500).json({ error: error.message });
-        }
+        if (error) return next(error);
 
-        if (!user) {
-          return res.status(401).json();
-        }
         req.token = info.token;
         req.user = user;
         req.authenticated = true;
@@ -62,10 +40,7 @@ module.exports = {
       req.user = await User.query().findById(id);
       return next();
     } catch (error) {
-      if (error.name === 'InvalidArgumentError') {
-        return res.status(401).json({ error: error.message });
-      }
-      return res.status(500).json({ error: error.message });
+      return next(error);
     }
   },
 
@@ -78,13 +53,7 @@ module.exports = {
       req.user = user;
       return next();
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
-        return res.status(401).json({ error: error.message });
-      }
-      if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ error: error.message, expiredAt: error.expiredAt });
-      }
-      return res.status(500).json({ error: error.message });
+      return next(error);
     }
   },
 };

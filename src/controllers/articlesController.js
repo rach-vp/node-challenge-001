@@ -4,17 +4,17 @@ const Author = require('../models/authors');
 const { NotFoundError } = require('../errors');
 
 module.exports = {
-  listArticles: async (req, res) => {
+  listArticles: async (req, res, next) => {
     try {
       const articles = await Article.query();
 
       res.status(200).json(articles);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  getArticleById: async (req, res) => {
+  getArticleById: async (req, res, next) => {
     try {
       const { id } = req.params;
       let formatedArticleObj;
@@ -54,11 +54,11 @@ module.exports = {
 
       res.status(200).json(formatedArticleObj || article);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  getArticleByCategory: async (req, res) => {
+  getArticleByCategory: async (req, res, next) => {
     try {
       const { category: categoryRaw } = req.query;
       const categoryFormated = categoryRaw.split('+').join(' ');
@@ -85,11 +85,11 @@ module.exports = {
 
       res.status(200).json(formatedArrayArticles);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  create: async (req, res) => {
+  create: async (req, res, next) => {
     try {
       const data = req.body;
 
@@ -100,11 +100,11 @@ module.exports = {
         article: { id, title },
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  update: async (req, res) => {
+  update: async (req, res, next) => {
     try {
       const { id } = req.params;
       const data = req.body;
@@ -119,14 +119,11 @@ module.exports = {
 
       res.status(201).json(updatedArticle);
     } catch (error) {
-      if (error.name === 'ForeignKeyViolationError') {
-        res.status(404).json({ error: 'Authors ID not found' });
-      }
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  delete: async (req, res) => {
+  delete: async (req, res, next) => {
     try {
       const { id } = req.params;
 
@@ -139,7 +136,7 @@ module.exports = {
         message: 'Article successfully deleted',
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 };

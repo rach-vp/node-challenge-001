@@ -4,17 +4,17 @@ const { NotFoundError } = require('../errors');
 const Author = require('../models/authors');
 
 module.exports = {
-  listAuthors: async (req, res) => {
+  listAuthors: async (req, res, next) => {
     try {
       const authors = await Author.query();
 
       res.status(201).json(authors);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  getAuthorById: async (req, res) => {
+  getAuthorById: async (req, res, next) => {
     try {
       const { id } = req.params;
 
@@ -25,11 +25,11 @@ module.exports = {
 
       res.status(201).json(author);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  create: async (req, res) => {
+  create: async (req, res, next) => {
     try {
       const { name, email, picture } = req.body;
 
@@ -44,11 +44,11 @@ module.exports = {
         author: { id: author.id, name, picture },
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  update: async (req, res) => {
+  update: async (req, res, next) => {
     try {
       const { id } = req.params;
       const data = req.body;
@@ -63,11 +63,11 @@ module.exports = {
 
       res.status(201).json(updatedAuthor);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 
-  delete: async (req, res) => {
+  delete: async (req, res, next) => {
     try {
       const { id } = req.params;
 
@@ -80,7 +80,7 @@ module.exports = {
         message: 'Author successfully deleted',
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   },
 };
