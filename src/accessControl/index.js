@@ -17,10 +17,7 @@ control.grant('admin')
   .deleteAny('user');
 
 control.grant('subscriber')
-  .readAny(
-    'article',
-    ['*', '!id'],
-  )
+  .readAny('article')
   .updateOwn('user', ['password']);
 
 module.exports = control;

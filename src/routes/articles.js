@@ -1,6 +1,11 @@
 const router = require('express').Router();
 const articlesController = require('../controllers/articlesController');
-const { authentication, authorization } = require('../middlewares');
+const {
+  authentication,
+  authorization,
+  authenticationAttempt,
+  authorizationAttempt,
+} = require('../middlewares');
 
 router.get(
   '/admin/articles',
@@ -11,6 +16,12 @@ router.get(
 router.get(
   '/admin/articles/:id',
   [authentication.bearer, authorization('article', 'read')],
+  articlesController.getArticleById,
+);
+
+router.get(
+  '/articles/:id',
+  [authenticationAttempt, authorizationAttempt('article', 'read')],
   articlesController.getArticleById,
 );
 

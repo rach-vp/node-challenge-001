@@ -20,6 +20,7 @@ module.exports = {
         }
 
         req.user = user;
+        req.authenticated = true;
         return next();
       },
     )(req, res, next);
@@ -45,9 +46,9 @@ module.exports = {
         if (!user) {
           return res.status(401).json();
         }
-
         req.token = info.token;
         req.user = user;
+        req.authenticated = true;
         return next();
       },
     )(req, res, next);

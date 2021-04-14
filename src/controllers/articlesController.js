@@ -1,5 +1,6 @@
 const moment = require('moment');
 const Article = require('../models/articles');
+const Author = require('../models/authors');
 const { NotFoundError } = require('../errors');
 
 module.exports = {
@@ -16,14 +17,43 @@ module.exports = {
   getArticleById: async (req, res) => {
     try {
       const { id } = req.params;
+      // const { role } = req.user;
+      const role = 'subscriber';
+      let formatedArticleObj;
 
       const article = await Article.query().findById(id);
+      const { name, picture } = await Author.query().findById(article.author_id);
 
       if (!article) {
         throw new NotFoundError('Article');
       }
 
-      res.status(200).json(article);
+      if (!req.authenticated) {
+        const {
+          category, title, summary, first_paragraph: firstParagraph,
+        } = article;
+        formatedArticleObj = {
+          author: { name, picture },
+          category,
+          title,
+          summary,
+          firstParagraph,
+        };
+      } else if (role !== 'admin') {
+        const {
+          category, title, summary, first_paragraph: firstParagraph, body,
+        } = article;
+        formatedArticleObj = {
+          author: { name, picture },
+          category,
+          title,
+          summary,
+          firstParagraph,
+          body,
+        };
+      }
+
+      res.status(200).json(formatedArticleObj);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
