@@ -43,4 +43,17 @@ router
     usersController.verifyEmail,
   );
 
+router
+  .post(
+    '/users/forgot-password',
+    usersController.forgotPassword,
+  );
+
+router
+  .post(
+    '/users/redefine-password/:token',
+    authentication.passwordRedefinition,
+    usersController.redefinePassword,
+  );
+
 module.exports = router;

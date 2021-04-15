@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const moment = require('moment');
 const User = require('../models/users');
 const tokens = require('../tokens');
-const { VerificationEmail } = require('../emails');
+const { VerificationEmail, PasswordRedefition } = require('../emails');
+const { NotFoundError } = require('../errors');
 
 const createPasswordHash = async (password) => bcrypt.hash(password, Number(process.env.HASH_COST));
 
@@ -20,7 +21,7 @@ module.exports = {
       const verificationToken = tokens.emailVerification.create(user.id);
       const address = `${process.env.API_ADDRESS}/users/verify-email/${verificationToken}`;
       const verificationEmail = new VerificationEmail(user.email, address);
-      verificationEmail.sendEmail(user.email).catch(console.log);
+      verificationEmail.sendEmail();
 
       res.status(201).send();
     } catch (error) {
@@ -72,6 +73,45 @@ module.exports = {
       );
 
       res.status(201).send();
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+      const user = await User.query().where('email', '=', email);
+
+      if (!user) {
+        throw new NotFoundError('Email');
+      }
+
+      const token = await tokens.passwordRedefinition.create(user[0].id);
+      const address = `${process.env.API_ADDRESS}/users/redefine-password/${token}`;
+      const redefinitionEmail = new PasswordRedefition(user[0].email, address);
+      redefinitionEmail.sendEmail();
+      res.status(200).send();
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async redefinePassword(req, res, next) {
+    try {
+      const { id } = req.user;
+      const { password } = req.body;
+      const passwordHash = await createPasswordHash(password);
+
+      await User.query().patchAndFetchById(
+        id,
+        {
+          password: passwordHash,
+          updated_at: moment(),
+        },
+      );
+
+      res.status(200).send();
     } catch (error) {
       next(error);
     }

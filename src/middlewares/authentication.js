@@ -61,4 +61,17 @@ module.exports = {
       return next(error);
     }
   },
+
+  passwordRedefinition: async (req, res, next) => {
+    try {
+      const { token } = req.params;
+      const id = await tokens.passwordRedefinition.verify(token);
+      const user = await User.query().findById(id);
+
+      req.user = user;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  },
 };

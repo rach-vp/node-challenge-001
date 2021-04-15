@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const moment = require('moment');
-const { blocklistAccessToken, allowlistRefreshToken } = require('../redis');
+const { blocklistAccessToken, allowlistRefreshToken, passwordRedefinition } = require('../redis');
 const { InvalidArgumentError } = require('../errors');
 
 const verifyTokenOnBlocklist = async (token, name, blocklist) => {
@@ -82,6 +82,17 @@ module.exports = {
     },
     verify(token) {
       return verifyJWT(token, this.name);
+    },
+  },
+  passwordRedefinition: {
+    name: 'password redefinition token',
+    expiration: [1, 'h'],
+    list: passwordRedefinition,
+    create(id) {
+      return createOpaqueToken(id, this.expiration, this.list);
+    },
+    verify(token) {
+      return verifyOpaqueToken(token, this.name, this.list);
     },
   },
 };
